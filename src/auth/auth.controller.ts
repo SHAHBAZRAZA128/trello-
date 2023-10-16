@@ -1,24 +1,26 @@
-import {Get, UseGuards, Request, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, HttpException, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthGuard } from '@nestjs/passport';
-
-
+import { LoginDto } from './dto/login.dto';
+import { ApiTags, ApiResponse, ApiOperation, ApiBadRequestResponse } from '@nestjs/swagger'; // Import necessary Swagger decorators
 
 @Controller('/auth')
+@ApiTags('auth')
 export class AuthController {
-	constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) { }
 
-	@UseGuards(AuthGuard('local'))
-	@Post('/login')
-	async login(@Request() req) {
-		return this.authService.login(req.user);
-
-	}
-
-	
-	// @Get('profile')
-	// getProfile(@Request() req) {
-	//   return "im protected route";
-	// }
-
+  @Post('/login')
+  @ApiOperation({ summary: 'User login' })
+  @ApiResponse({ status: 200, description: 'Logged in successfully' }) // Describe the successful response
+  @ApiBadRequestResponse({ description: 'Bad request' }) // Describe a possible error response
+  async login(@Body() loginDto: LoginDto) {
+    try {
+      const token = await this.authService.login(loginDto.email, loginDto.password);
+      if (!token) {
+        throw new HttpException('Authentication failed', HttpStatus.UNAUTHORIZED);
+      }
+      return { access_token: token.access_token };
+    } catch (error) {
+      throw error;
+    }
+  }
 }

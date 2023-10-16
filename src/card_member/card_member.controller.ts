@@ -2,7 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CardMemberService } from './card_member.service';
 import { CreateCardMemberDto } from './dto/create-card_member.dto';
 import { UpdateCardMemberDto } from './dto/update-card_member.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth('JWT-auth')
+@ApiTags('card-member')
 @Controller('card-member')
 export class CardMemberController {
   constructor(private readonly cardMemberService: CardMemberService) {}

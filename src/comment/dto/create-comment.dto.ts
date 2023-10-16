@@ -1,8 +1,9 @@
 import { IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger'; // Import necessary Swagger decorator
 
 export class CreateCommentDto {
-	@IsNotEmpty()
-	@IsString()
-	comment: string;
-
+  @ApiProperty({ description: 'Comment text', example: 'This is a comment' }) // Describe the property
+  @IsNotEmpty()
+  @IsString()
+  comment: string;
 }
